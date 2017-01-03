@@ -1,0 +1,144 @@
+<div  ng-controller="homeController" ng-init="init()">
+		<div class="jumbotron">
+        <h1>Stellar Trades Explorer</h1>
+         <div class="form-group">
+              <label>Select Stellar Network</label>
+              <label class="radio-inline">
+                <input type="radio" name="network" ng-model="networkType" ng-value="1" checked="true" ng-change="networkChange()"> 
+                Horizon Testnet
+              </label>
+              <label class="radio-inline">
+                <input type="radio" name="network" ng-model="networkType" ng-value="2"  ng-change="networkChange()"> Horizon Public
+              </label>
+            </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6 col-xs-12">
+        <h3>Recent Offers</h3>
+        <div class="boxify">
+	        <div class="row" ng-repeat="o in recentOffers">
+	        	<div class=" col-xs-6">
+	        	<div class="bs-callout bs-callout-danger"> 
+	        		<h4>Selling</h4> 
+	        		<p>Asset: {{o.selling_asset_type == 'native' ? 'XLM' : o.selling_asset_code}} </p> 
+	        		<p>Issued By: {{o.selling_asset_type == 'native' ? 'SDF' : o.selling_asset_issuer}}</p>
+	        		<p>Amount: {{o.amount}} </p> 
+	        	</div>
+	        	</div>
+	        	<div class=" col-xs-6">
+	        	<div class="bs-callout bs-callout-success"> 
+	        		<h4>Buying</h4> 
+	        		<p>Asset: {{o.buying_asset_type == 'native' ? 'XLM' : o.buying_asset_code}} </p> 
+	        		<p>Issued By: {{o.buying_asset_type == 'native' ? 'SDF' : o.buying_asset_issuer}}</p>
+	        	</div>
+	        	</div>
+	        </div>
+        </div>
+
+      </div>
+      <div class="col-md-6 col-xs-12">
+        <h3>Search Bids/Asks</h3>
+        <form class="form">
+					<div class="form-group">
+						<label>Selling Asset</label><br>
+						<label class="radio-inline">
+					    <input type="radio" ng-model="selling.assetType" ng-value="1" ng-change="assetInput(1,selling.assetType)">
+					    XLM(native)
+					  </label>
+					  <label class="radio-inline">
+					    <input type="radio" ng-model="selling.assetType" ng-value="4" ng-change="assetInput(1,selling.assetType)">
+					    Alphanumeric 4
+					  </label>
+					  <label class="radio-inline">
+					    <input type="radio" ng-model="selling.assetType" ng-value="12" ng-change="assetInput(1,selling.assetType)">
+					    Alphanumeric 12
+					  </label>
+					</div>
+
+					<div class="form-group" id="sellingForm" ng-show="showSelling">
+						<input class="form-control" placeholder="Asset Code" type="text" name="assetCode" ng-model="selling.assetCode" required maxlength="{{selling.assetType}}"/>
+	          <input class="form-control" placeholder="Asset Issuer ID" type="text" name="assetIssuer" ng-model="selling.assetIssuer" required/>
+					</div>
+
+					<div class="form-group">
+						<label>Buying Asset</label><br>
+						<label class="radio-inline">
+					    <input type="radio" ng-model="buying.assetType" ng-value="1" ng-change="assetInput(2,buying.assetType)">
+					     XLM(native)
+					  </label>
+					  <label class="radio-inline">
+					    <input type="radio" ng-model="buying.assetType" ng-value="4" ng-change="assetInput(2,buying.assetType)">
+					     Alphanumeric 4
+					  </label>
+					  <label class="radio-inline">
+					    <input type="radio" ng-model="buying.assetType" ng-value="12" ng-change="assetInput(2,buying.assetType)">
+					     Alphanumeric 12
+					  </label>
+					</div>				
+					<div class="form-group" id="buyingForm" ng-show="showBuying">
+						<input class="form-control" placeholder="Asset Code" type="text" name="assetCode" ng-model="buying.assetCode" required maxlength="{{buying.assetType}}"/>
+	          <input class="form-control" placeholder="Asset Issuer ID" type="text" name="assetIssuer" ng-model="buying.assetIssuer" required/>  
+					</div>
+					<div class="form-group">
+						<p ng-repeat="x in infoMsg">{{x}}</p>
+					</div>
+
+					<button type="submit" class="btn btn-info" ng-click="searchTrades()">Submit</button>
+				</form>
+
+				<div class="row">
+					<h4>Results</h4>
+					<p>Base: {{ searchResult.base.asset_type == 'native' ? 'XLM' : searchResult.base.asset_code}}</p>
+					<p>Counter: {{ searchResult.counter.asset_type == 'native' ? 'XLM' : searchResult.counter.asset_code}}</p>
+        	<div class=" col-xs-6">
+	        	<div class="bs-callout bs-callout-danger" ng-repeat="b in searchResult.bids"> 
+	        		<h4>Bid</h4> 
+	        		<p>Amount: {{b.amount}} </p> 
+	        		<p>Price: {{b.price}} </p> 
+	        	</div>
+	        	<div>
+	        		<p class="text-info" ng-if="searchResult.bids.length < 1"> No bids found.</p>
+	        	</div>
+        	</div>
+        	<div class=" col-xs-6">
+	        	<div class="bs-callout bs-callout-success" ng-repeat="a in searchResult.asks"> 
+	        		<h4>Ask</h4> 
+	        		<p>Amount: {{a.amount}} </p> 
+	        		<p>Price: {{a.price}} </p> 
+	        	</div>
+	        	<div>
+	        		<p class="text-info" ng-if="searchResult.asks.length < 1"> No asks found.</p>
+	        	</div>
+        	</div>
+
+        </div> 
+
+      </div>
+      <div class="col-md-12 col-xs-12">
+        <h3>Recent Trades</h3>
+        <div class="row" ng-repeat="t in trades ">
+        	<div class=" col-xs-6">
+        	<div class="bs-callout bs-callout-danger" > 
+        		<h4>Bought</h4> 
+        		<p>Asset: {{t.bought_asset_type == 'native'? 'XLM' : t.bought_asset_code}}</p> 
+        		<p>Issued By: {{t.bought_asset_type == 'native'? 'SDF' : t.bought_asset_issuer}}</p> 
+        		<p>Buyer: {{t.seller_attr}}</p> 
+        	</div>
+        	</div>
+        	<div class=" col-xs-6">
+        	<div class="bs-callout bs-callout-success"> 
+        		<h4>Sold</h4> 
+        		<p>Asset: {{t.sold_asset_type == 'native'? 'XLM' : t.sold_asset_code}}</p> 
+        		<p>Issued By: {{t.sold_asset_type == 'native'? 'SDF' : t.sold_asset_issuer}}</p> 
+        		<p>Seller: {{t.seller_attr}} </p> 
+        	</div>
+        	</div>
+        </div>        
+      </div>
+      
+    </div>
+
+
+
+
+</div>
