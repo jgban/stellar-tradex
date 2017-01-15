@@ -1,16 +1,17 @@
 <div  ng-controller="homeController" ng-init="init()">
 		<div class="jumbotron">
         <h1>Stellar Trades Explorer</h1>
-         <div class="form-group">
-              <label>Select Stellar Network</label>
-              <label class="radio-inline">
-                <input type="radio" name="network" ng-model="networkType" ng-value="1" checked="true" ng-change="networkChange()"> 
-                Horizon Testnet
-              </label>
-              <label class="radio-inline">
-                <input type="radio" name="network" ng-model="networkType" ng-value="2"  ng-change="networkChange()"> Horizon Public
-              </label>
-            </div>
+        <div class="form-group">
+          <label>Select Stellar Network</label>
+          <label class="radio-inline">
+            <input type="radio" name="network" ng-model="networkType" ng-value="1" checked="true" ng-change="networkChange()"> 
+            Horizon Testnet
+          </label>
+          <label class="radio-inline">
+            <input type="radio" name="network" ng-model="networkType" ng-value="2"  ng-change="networkChange()"> Horizon Public
+          </label>
+        </div>
+        
     </div>
     <div class="row">
       <div class="col-md-6 col-xs-12">
@@ -30,6 +31,7 @@
 	        		<h4>Buying</h4> 
 	        		<p>Asset: {{o.buying_asset_type == 'native' ? 'XLM' : o.buying_asset_code}} </p> 
 	        		<p>Issued By: {{o.buying_asset_type == 'native' ? 'SDF' : o.buying_asset_issuer}}</p>
+	        		<p>Price: {{o.price}} </p> 
 	        	</div>
 	        	</div>
 	        </div>
@@ -123,6 +125,7 @@
         		<p>Asset: {{t.bought_asset_type == 'native'? 'XLM' : t.bought_asset_code}}</p> 
         		<p>Issued By: {{t.bought_asset_type == 'native'? 'SDF' : t.bought_asset_issuer}}</p> 
         		<p>Buyer: {{t.buyer_attr}}</p> 
+        		<p>Bought Amount: {{t.bought_amount}}</p> 
         	</div>
         	</div>
         	<div class=" col-xs-6">
@@ -131,6 +134,7 @@
         		<p>Asset: {{t.sold_asset_type == 'native'? 'XLM' : t.sold_asset_code}}</p> 
         		<p>Issued By: {{t.sold_asset_type == 'native'? 'SDF' : t.sold_asset_issuer}}</p> 
         		<p>Seller: {{t.seller_attr}} </p> 
+        		<p>Sold Amount: {{t.sold_amount}}</p> 
         	</div>
         	</div>
         </div>        
