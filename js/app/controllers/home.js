@@ -30,6 +30,7 @@ tradex.controller('homeController', function($scope, $state, $http) {
 		
 		if ($scope.networkType == 1) {
 			console.log("setting server to testNetwork");
+			StellarSdk.Network.useTestNetwork();
 			server = new StellarSdk.Server(horizonTest);
 		};
 		
@@ -115,6 +116,17 @@ tradex.controller('homeController', function($scope, $state, $http) {
   				})
   				.catch(function(err) { console.log(err); });
 
+  		server.orderbook(sellingAsset, buyingAsset)
+					.trades()
+					.limit(20)
+					.order("desc")
+					.call()
+  				.then(function(resp) { 
+  					console.log(resp); 
+  					$scope.trades = resp.records;
+  					$scope.$apply();
+  				})
+  				.catch(function(err) { console.log(err); });
 
 		}else{
 			$scope.infoMsg.push('Select Assets');
